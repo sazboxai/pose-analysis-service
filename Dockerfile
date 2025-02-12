@@ -1,9 +1,8 @@
 FROM python:3.9-slim
 
-# Install system dependencies
+# Install minimal system dependencies
 RUN apt-get update && \
-    apt-get install -y \
-    libgl1-mesa-glx \
+    apt-get install -y --no-install-recommends \
     libglib2.0-0 \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
@@ -12,7 +11,10 @@ WORKDIR /app
 
 # Copy requirements and install dependencies
 COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
+
+# Install opencv-python-headless instead of full opencv
+RUN pip install --no-cache-dir opencv-python-headless && \
+    pip install --no-cache-dir -r requirements.txt
 
 # Copy application code and .env file
 COPY . .
